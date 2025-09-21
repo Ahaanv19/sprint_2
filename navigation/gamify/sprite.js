@@ -1,5 +1,5 @@
 
-class Sprite {
+export class Sprite {
     constructor(src, frameCount, fps) {
         this.image = new Image();
         this.image.src = src;
@@ -10,7 +10,7 @@ class Sprite {
     }
 
     draw(ctx, frame, row, x, y, scale = 1, canvas) {
-        const newFrame = (Math.floor(frame/fps)) % this.frameCount;
+        const newFrame = (Math.floor(frame/this.fps)) % this.frameCount;
         const sx = newFrame * this.frameWidth;
         const sy = row * this.frameHeight;
         const sw = this.frameWidth;

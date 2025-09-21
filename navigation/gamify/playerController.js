@@ -7,26 +7,27 @@ import { Sprite } from "./sprite.js";
 export class PlayerController {
     constructor(startX, startY, roomID = 0) {
         this.transform = new Transform(startX, startY);
-        this.socket = roomID;
+        // this.socket = roomID;
         this.speed = 0.1;
-        this.initSocketEvents();
-        this.img = new Sprite("./art/mushroom-player.png", 6, 10);
+        // this.initSocketEvents();
+        this.walk = new Sprite("./art/mushroom-player.png", 6, 10);
+        this.stand = new Sprite("./art/mushroom-player.png", 1, 10);
     }
 
-    initSocketEvents() {
-        this.socket.on("movePlayer", (data) => {
-            this.transform.position.x = data.x;
-            this.transform.position.y = data.y;
-            camera.update(this.player);
-        });
+    // initSocketEvents() {
+    //     this.socket.on("movePlayer", (data) => {
+    //         this.transform.position.x = data.x;
+    //         this.transform.position.y = data.y;
+    //         camera.update(this.player);
+    //     });
 
-        this.socket.on("disconnect", () => {
-            console.log("Disconnected from server");
-        });
-    }
+    //     this.socket.on("disconnect", () => {
+    //         console.log("Disconnected from server");
+    //     });
+    // }
 
     move(speed) {
-        const rad = (this.transform.direction.dir * Math.PI) / 180;
+        const rad = (this.transform.direction * Math.PI) / 180;
         this.transform.velocity.xv += speed * Math.cos(rad);
         this.transform.velocity.yv += speed * Math.sin(rad);
     }
@@ -56,27 +57,24 @@ export class PlayerController {
         this.transform.position.x += this.transform.velocity.xv * deltaTime;
         this.transform.position.y += this.transform.velocity.yv * deltaTime;
 
-        this.socket.emit("movePlayer", {
-            x: this.transform.position.x,
-            y: this.transform.position.y,
-            dir: this.transform.direction.dir,
-        });
+        // this.socket.emit("movePlayer", {
+        //     x: this.transform.position.x,
+        //     y: this.transform.position.y,
+        //     dir: this.transform.direction.dir,
+        // });
     }
 
     draw(ctx, frame, camera, canvas) {
-        let pos = {
-            x: this.transform.position.x - camera.transform.position.x,
-            y: this.transform.position.y - camera.transform.position.y,
+        const pos = {
+            x: this.transform.position.x,
+            y: this.transform.position.y,
         }
 
-        this.img.draw(
-            ctx,
-            frame,
-            0,
-            pos.x,
-            pos.y,
-            1,
-            canvas,
-        );
+        const d = this.transform.distance(0,0,this.transform.velocity.xv,this.transform.velocity.yv);
+        if (d <= 1e-3) {
+            this.stand.draw(ctx, frame, 0, pos.x, pos.y, 1, canvas);
+        } else {
+            this.walk.draw(ctx, 1, 0, pos.x, pos.y, 1, canvas);
+        }
     }
 }
