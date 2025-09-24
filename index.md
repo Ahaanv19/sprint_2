@@ -6,6 +6,8 @@ sprite: /images/mario_animation.png
 hide: true
 ---
 
+[test](/sprint_2/sandbox/)
+
 <!-- Liquid:  statements-->
 
 <!--- Concatenation of site URL to frontmatter sprite  --->
