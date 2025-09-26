@@ -7,6 +7,7 @@ hide: true
 ---
 
 [test](/sprint_2/sandbox/)
+[lesson](/sprint_2/input)
 
 <!-- Liquid:  statements-->
 
