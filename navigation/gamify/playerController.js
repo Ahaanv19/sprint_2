@@ -3,6 +3,7 @@ import { keys } from "./input.js";
 // import { socket } from "./socket.js";
 import { Transform } from "./tools.js";
 import { Sprite } from "./sprite.js";
+import { boxCollide } from "./hitbox.js"
 
 export class PlayerController {
     constructor(startX, startY, roomID = 0) {
@@ -26,25 +27,34 @@ export class PlayerController {
     //     });
     // }
 
-    move(speed) {
+    moveVel(speed) {
         const rad = (this.transform.direction * Math.PI) / 180;
         this.transform.velocity.xv += speed * Math.cos(rad);
         this.transform.velocity.yv += speed * Math.sin(rad);
     }
 
+    move(xv,yv) {
+        this.transform.position.x += xv * Math.cos(rad);
+        this.transform.position.y += yv * Math.cos(rad);
+        if (boxCollide(this.transform.position)) {
+            this.transform.position.x += -xv * Math.cos(rad);
+            this.transform.position.y += -yv * Math.cos(rad);
+        }
+    }
+
     controls(speed) {
         if (keys.w) {
             this.transform.direction.dir = 0;
-            this.move(speed);
+            this.moveVel(speed);
         } else if (keys.s) {
             this.transform.direction.dir = 180;
-            this.move(speed);
+            this.moveVel(speed);
         } else if (keys.a) {
             this.transform.direction.dir = 270;
-            this.move(speed);
+            this.moveVel(speed);
         } else if (keys.d) {
             this.transform.direction.dir = 90;
-            this.move(speed);
+            this.moveVel(speed);
         }
     }
 
@@ -54,9 +64,8 @@ export class PlayerController {
         this.transform.velocity.xv *= 0.9;
         this.transform.velocity.yv *= 0.9;
 
-        this.transform.position.x += this.transform.velocity.xv * deltaTime;
-        this.transform.position.y += this.transform.velocity.yv * deltaTime;
-
+        this.move(this.transform.velocity.xv * deltaTime, 0);
+        this.move(0, this.transform.velocity.yv * deltaTime);
         // this.socket.emit("movePlayer", {
         //     x: this.transform.position.x,
         //     y: this.transform.position.y,
